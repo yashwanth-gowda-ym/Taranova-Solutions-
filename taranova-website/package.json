@@ -9,16 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emailjs/browser": "^3.11.0",
+    "framer-motion": "^10.18.0",
+    "lucide-react": "^0.294.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.20.0",
-    "framer-motion": "^10.16.4",
-<<<<<<< HEAD
-    "lucide-react": "^0.294.0",
-    "@emailjs/browser": "^3.11.0"
-=======
-    "lucide-react": "^0.294.0"
->>>>>>> 2d6b4855c10da6cbd16c805ffdcad0bebfcbb748
+    "react-router-dom": "^6.30.3"
   },
   "devDependencies": {
     "@types/react": "^18.2.37",

@@ -1,27 +1,19 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-<<<<<<< HEAD
 import { MapPin, Mail, Phone, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 import { emailjsConfig } from '../config/emailjs';
-=======
-import { MapPin, Mail, Phone, Clock, Send, CheckCircle } from 'lucide-react';
->>>>>>> 2d6b4855c10da6cbd16c805ffdcad0bebfcbb748
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    mobile: '', // ADDED: Mobile field state
     company: '',
     message: '',
   });
-<<<<<<< HEAD
   const [status, setStatus] = useState('idle'); // 'idle' | 'sending' | 'success' | 'error'
   const [errorMessage, setErrorMessage] = useState('');
-=======
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null);
->>>>>>> 2d6b4855c10da6cbd16c805ffdcad0bebfcbb748
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,7 +22,7 @@ const ContactPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-<<<<<<< HEAD
+
     setStatus('sending');
     setErrorMessage('');
 
@@ -38,6 +30,7 @@ const ContactPage = () => {
       const templateParams = {
         user_name: formData.name,
         user_email: formData.email,
+        user_mobile: formData.mobile || 'Not provided', // ADDED: Variable for EmailJS
         company: formData.company || 'Not specified',
         message: formData.message,
         reply_to: formData.email,
@@ -51,7 +44,8 @@ const ContactPage = () => {
       );
 
       setStatus('success');
-      setFormData({ name: '', email: '', company: '', message: '' });
+      // Reset form including mobile
+      setFormData({ name: '', email: '', mobile: '', company: '', message: '' });
       
       // Reset success message after 5 seconds
       setTimeout(() => {
@@ -64,14 +58,6 @@ const ContactPage = () => {
         error.text || 'Failed to send message. Please try again later or email us directly.'
       );
     }
-=======
-    setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setSubmitStatus('success');
-    setFormData({ name: '', email: '', company: '', message: '' });
-    setIsSubmitting(false);
-    setTimeout(() => setSubmitStatus(null), 3000);
->>>>>>> 2d6b4855c10da6cbd16c805ffdcad0bebfcbb748
   };
 
   const contactInfo = [
@@ -116,13 +102,8 @@ const ContactPage = () => {
               Get In <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">Touch</span>
             </h1>
             <p className="text-xl text-slate-600 leading-relaxed">
-<<<<<<< HEAD
               Have a project in mind? We&apos;d love to hear about it. Reach out to us 
               and let&apos;s discuss how we can help bring your ideas to life.
-=======
-              Have a project in mind? We'd love to hear about it. Reach out to us 
-              and let's discuss how we can help bring your ideas to life.
->>>>>>> 2d6b4855c10da6cbd16c805ffdcad0bebfcbb748
             </p>
           </motion.div>
         </div>
@@ -140,11 +121,7 @@ const ContactPage = () => {
               transition={{ duration: 0.6 }}
             >
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-8">
-<<<<<<< HEAD
                 Let&apos;s Start a Conversation
-=======
-                Let's Start a Conversation
->>>>>>> 2d6b4855c10da6cbd16c805ffdcad0bebfcbb748
               </h2>
 
               <div className="space-y-6 mb-10">
@@ -205,7 +182,6 @@ const ContactPage = () => {
             >
               <h2 className="text-2xl font-bold text-slate-900 mb-6">Send Us a Message</h2>
 
-<<<<<<< HEAD
               {/* Success Message */}
               {status === 'success' && (
                 <motion.div
@@ -238,9 +214,8 @@ const ContactPage = () => {
                 </motion.div>
               )}
 
-=======
->>>>>>> 2d6b4855c10da6cbd16c805ffdcad0bebfcbb748
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Row 1: Name & Email */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">
@@ -254,12 +229,8 @@ const ContactPage = () => {
                       onChange={handleChange}
                       required
                       placeholder="John Doe"
-<<<<<<< HEAD
                       disabled={status === 'sending'}
                       className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-=======
-                      className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
->>>>>>> 2d6b4855c10da6cbd16c805ffdcad0bebfcbb748
                     />
                   </div>
                   <div>
@@ -274,34 +245,45 @@ const ContactPage = () => {
                       onChange={handleChange}
                       required
                       placeholder="john@company.com"
-<<<<<<< HEAD
                       disabled={status === 'sending'}
                       className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-=======
-                      className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
->>>>>>> 2d6b4855c10da6cbd16c805ffdcad0bebfcbb748
                     />
                   </div>
                 </div>
 
-                <div>
-                  <label htmlFor="company" className="block text-sm font-medium text-slate-700 mb-2">
-                    Company (Optional)
-                  </label>
-                  <input
-                    type="text"
-                    id="company"
-                    name="company"
-                    value={formData.company}
-                    onChange={handleChange}
-                    placeholder="Your Company"
-<<<<<<< HEAD
-                    disabled={status === 'sending'}
-                    className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-=======
-                    className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
->>>>>>> 2d6b4855c10da6cbd16c805ffdcad0bebfcbb748
-                  />
+                {/* Row 2: Mobile & Company */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="mobile" className="block text-sm font-medium text-slate-700 mb-2">
+                      Mobile Number *
+                    </label>
+                    <input
+                      type="tel"
+                      id="mobile"
+                      name="mobile"
+                      value={formData.mobile}
+                      onChange={handleChange}
+                      required
+                      placeholder="+91 98765 43210"
+                      disabled={status === 'sending'}
+                      className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="company" className="block text-sm font-medium text-slate-700 mb-2">
+                      Company (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      id="company"
+                      name="company"
+                      value={formData.company}
+                      onChange={handleChange}
+                      placeholder="Your Company"
+                      disabled={status === 'sending'}
+                      className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -316,18 +298,13 @@ const ContactPage = () => {
                     required
                     rows="4"
                     placeholder="Tell us about your project..."
-<<<<<<< HEAD
                     disabled={status === 'sending'}
                     className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 resize-none disabled:opacity-50 disabled:cursor-not-allowed"
-=======
-                    className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 resize-none"
->>>>>>> 2d6b4855c10da6cbd16c805ffdcad0bebfcbb748
                   />
                 </div>
 
                 <button
                   type="submit"
-<<<<<<< HEAD
                   disabled={status === 'sending'}
                   className={`w-full py-4 rounded-lg font-semibold text-lg flex items-center justify-center space-x-2 transition-all duration-300 ${
                     status === 'success'
@@ -338,16 +315,6 @@ const ContactPage = () => {
                   } ${status === 'sending' ? 'cursor-not-allowed opacity-70' : ''}`}
                 >
                   {status === 'sending' ? (
-=======
-                  disabled={isSubmitting}
-                  className={`w-full py-4 rounded-lg font-semibold text-lg flex items-center justify-center space-x-2 transition-all duration-300 ${
-                    submitStatus === 'success'
-                      ? 'bg-green-500 text-white'
-                      : 'bg-slate-900 text-white hover:bg-slate-800 hover:shadow-lg'
-                  }`}
-                >
-                  {isSubmitting ? (
->>>>>>> 2d6b4855c10da6cbd16c805ffdcad0bebfcbb748
                     <>
                       <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -355,11 +322,7 @@ const ContactPage = () => {
                       </svg>
                       <span>Sending...</span>
                     </>
-<<<<<<< HEAD
                   ) : status === 'success' ? (
-=======
-                  ) : submitStatus === 'success' ? (
->>>>>>> 2d6b4855c10da6cbd16c805ffdcad0bebfcbb748
                     <>
                       <CheckCircle className="w-5 h-5" />
                       <span>Message Sent!</span>
