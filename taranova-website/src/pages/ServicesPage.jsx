@@ -8,48 +8,57 @@ const services = [
     title: 'Web Application Development',
     description: 'Custom web applications built with modern frameworks and cloud technologies for scalability and performance.',
     features: ['React & Next.js', 'Node.js & Express', 'REST & GraphQL APIs', 'Cloud Deployment'],
+    // Background images kept from previous step
+    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=800',
   },
   {
     icon: Smartphone,
     title: 'Mobile Application Development',
     description: 'Native and cross-platform mobile applications that deliver exceptional user experiences.',
     features: ['iOS Development', 'Android Development', 'React Native', 'Flutter Apps'],
+    image: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&q=80&w=800',
   },
   {
     icon: Cpu,
     title: 'AI Agents Development',
     description: 'Intelligent autonomous agents powered by advanced machine learning and natural language processing.',
     features: ['Custom AI Models', 'NLP Integration', 'Automation Workflows', 'Smart Assistants'],
+    image: 'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?auto=format&fit=crop&q=80&w=800',
   },
   {
     icon: Brain,
     title: 'AI-Driven Applications',
     description: 'Integrating artificial intelligence capabilities into business applications for enhanced automation.',
     features: ['Predictive Analytics', 'Computer Vision', 'Recommendation Systems', 'Data Processing'],
+    image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800',
   },
   {
     icon: Layers,
     title: 'UI/UX Design',
     description: 'User-centered design that creates intuitive and engaging digital experiences.',
     features: ['User Research', 'Wireframing', 'Prototyping', 'Design Systems'],
+    image: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&q=80&w=800',
   },
   {
     icon: Code,
     title: 'Custom Software',
     description: 'Tailored software solutions designed to address specific business challenges.',
     features: ['Enterprise Software', 'CRM Development', 'ERP Solutions', 'Integration Services'],
+    image: 'https://images.unsplash.com/photo-1550439062-609e1531270e?auto=format&fit=crop&q=80&w=800',
   },
   {
     icon: Cloud,
     title: 'Cloud Solutions',
     description: 'Secure and scalable cloud infrastructure and deployment services.',
     features: ['AWS & Azure', 'Serverless Architecture', 'DevOps & CI/CD', 'Containerization'],
+    image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800',
   },
   {
     icon: Shield,
     title: 'Cybersecurity',
     description: 'Comprehensive security solutions to protect your digital assets and data.',
     features: ['Security Audits', 'Penetration Testing', 'Compliance', 'Security Monitoring'],
+    image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=800',
   },
 ];
 
@@ -69,7 +78,7 @@ const ServicesPage = () => {
 
   return (
     <div className="pt-20">
-      {/* Hero Section */}
+      {/* Hero Section - Reverted to Original */}
       <section className="py-20 sm:py-32 bg-slate-50">
         <div className="container-custom">
           <motion.div
@@ -90,7 +99,7 @@ const ServicesPage = () => {
         </div>
       </section>
 
-      {/* Services Grid */}
+      {/* Services Grid - Reverted sizes, added background images */}
       <section className="section-spacing bg-white">
         <div className="container-custom">
           <motion.div
@@ -104,9 +113,19 @@ const ServicesPage = () => {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="group p-8 bg-white rounded-2xl border border-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50 hover:border-slate-300"
+                className="group relative p-8 rounded-2xl border border-slate-200 transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50 hover:border-slate-300 overflow-hidden"
               >
-                <div className="flex items-start space-x-6">
+                {/* Background Image Layer */}
+                <div 
+                  className="absolute inset-0 bg-cover bg-center z-0 transition-transform duration-700 group-hover:scale-105"
+                  style={{ backgroundImage: `url(${service.image})` }}
+                />
+                
+                {/* White Overlay for Contrast (Original feel maintained) */}
+                <div className="absolute inset-0 bg-white/95 z-10 group-hover:bg-white/90 transition-colors duration-300" />
+
+                {/* Content Layer - Reverted to Original Layout Structure */}
+                <div className="relative z-20 flex items-start space-x-6">
                   <div className="flex-shrink-0">
                     <div className="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-blue-50 group-hover:scale-110">
                       <service.icon className="w-7 h-7 text-slate-700 group-hover:text-blue-600" />
@@ -131,7 +150,7 @@ const ServicesPage = () => {
         </div>
       </section>
 
-      {/* Process Section */}
+      {/* Process Section - Reverted to Original sizes */}
       <section className="section-spacing bg-slate-900">
         <div className="container-custom">
           <motion.div
@@ -174,7 +193,7 @@ const ServicesPage = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section - Reverted to Original */}
       <section className="section-spacing bg-white">
         <div className="container-custom">
           <motion.div
