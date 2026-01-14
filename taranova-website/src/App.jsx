@@ -6,6 +6,7 @@ import { Menu, X, ArrowRight, Globe, Smartphone, Cpu, Brain, CheckCircle, Star, 
 // Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -41,6 +42,7 @@ function AnimatedRoutes() {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <div className="min-h-screen bg-white">
         <Navbar />
         <AnimatedRoutes />
