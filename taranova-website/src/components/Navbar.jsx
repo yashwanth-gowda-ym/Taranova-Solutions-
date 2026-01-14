@@ -49,7 +49,7 @@ const Navbar = () => {
           />
           <div className="flex flex-col">
             <ShinyText 
-              text="Taranova"
+              text="TARANOVA"
               className="text-2xl font-bold tracking-tight"
               color="#0f172a"
               shineColor="#06b6d4"
@@ -157,3 +157,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
