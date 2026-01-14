@@ -168,25 +168,127 @@ const ProjectsPage = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="section-spacing bg-slate-900">
-        <div className="container-custom">
+      {/* CTA Section - Elegant Professional Design */}
+      <section className="py-24 md:py-32 relative overflow-hidden bg-gradient-to-br from-slate-100 via-slate-50 to-blue-100">
+        {/* Elegant geometric background pattern */}
+        <div className="absolute inset-0 opacity-40">
+          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="hexGrid" x="0" y="0" width="80" height="92" patternUnits="userSpaceOnUse">
+                <polygon points="40,0 80,23 80,69 40,92 0,69 0,23" fill="none" stroke="#0ea5e9" strokeWidth="0.8" opacity="0.4" />
+              </pattern>
+              <linearGradient id="elegantGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.8" />
+                <stop offset="50%" stopColor="#3b82f6" stopOpacity="0.9" />
+                <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0.8" />
+              </linearGradient>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#hexGrid)" />
+            
+            {/* Elegant floating shapes */}
+            <motion.circle
+              cx="15%"
+              cy="20%"
+              r="40"
+              fill="url(#elegantGradient)"
+              opacity="0.15"
+              initial={{ scale: 0, rotate: 0 }}
+              whileInView={{ scale: 1, rotate: 180 }}
+              viewport={{ once: true }}
+              transition={{ duration: 2, ease: 'easeOut' }}
+            />
+            <motion.circle
+              cx="85%"
+              cy="80%"
+              r="60"
+              fill="url(#elegantGradient)"
+              opacity="0.15"
+              initial={{ scale: 0, rotate: 0 }}
+              whileInView={{ scale: 1, rotate: -180 }}
+              viewport={{ once: true }}
+              transition={{ duration: 2, delay: 0.3, ease: 'easeOut' }}
+            />
+            
+            {/* Subtle connection lines */}
+            {[
+              { x1: '20%', y1: '15%', x2: '35%', y2: '30%', delay: 0 },
+              { x1: '65%', y1: '25%', x2: '80%', y2: '40%', delay: 0.2 },
+              { x1: '10%', y1: '70%', x2: '25%', y2: '85%', delay: 0.4 },
+              { x1: '75%', y1: '60%', x2: '90%', y2: '75%', delay: 0.6 },
+            ].map((line, i) => (
+              <motion.line
+                key={i}
+                x1={line.x1}
+                y1={line.y1}
+                x2={line.x2}
+                y2={line.y2}
+                stroke="url(#elegantGradient)"
+                strokeWidth="2"
+                opacity="0.6"
+                initial={{ pathLength: 0 }}
+                whileInView={{ pathLength: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.5, delay: line.delay, ease: 'easeInOut' }}
+              />
+            ))}
+            
+            {/* Gentle floating elements */}
+            {[
+              { cx: '25%', cy: '45%', r: '3', delay: 0 },
+              { cx: '55%', cy: '35%', r: '4', delay: 0.1 },
+              { cx: '75%', cy: '55%', r: '3.5', delay: 0.2 },
+              { cx: '40%', cy: '70%', r: '2.5', delay: 0.3 },
+              { cx: '60%', cy: '85%', r: '3', delay: 0.4 },
+            ].map((element, i) => (
+              <g key={i}>
+                <motion.circle
+                  cx={element.cx}
+                  cy={element.cy}
+                  r={element.r}
+                  fill="#06b6d4"
+                  opacity="0.8"
+                  initial={{ scale: 0, opacity: 0 }}
+                  whileInView={{ scale: 1, opacity: 0.8 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: element.delay }}
+                />
+                <motion.circle
+                  cx={element.cx}
+                  cy={element.cy}
+                  r={element.r + 8}
+                  fill="none"
+                  stroke="#3b82f6"
+                  strokeWidth="0.8"
+                  opacity="0.5"
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: [1, 1.3, 1], opacity: [0.5, 0, 0.5] }}
+                  transition={{ duration: 4, repeat: Infinity, delay: element.delay }}
+                />
+              </g>
+            ))}
+          </svg>
+        </div>
+
+        {/* Bottom accent bar only */}
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-400/60 to-transparent" />
+
+        <div className="container-custom relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="max-w-3xl mx-auto text-center"
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="max-w-4xl mx-auto text-center"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight">
               Have a Project in Mind?
             </h2>
-            <p className="text-slate-400 mb-8 text-lg">
+            <p className="text-lg sm:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
               We'd love to hear about it. Let's discuss how we can bring your vision to life.
             </p>
             <Link
               to="/contact"
-              className="inline-flex items-center space-x-2 px-8 py-4 bg-white text-slate-900 font-medium rounded-lg transition-all duration-300 hover:bg-slate-100 hover:shadow-lg"
+              className="inline-flex items-center space-x-3 px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-semibold rounded-lg transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/30 hover:scale-105"
             >
               <span>Start a Project</span>
               <ArrowRight className="w-5 h-5" />
