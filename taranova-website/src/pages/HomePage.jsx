@@ -475,29 +475,271 @@ const HomePage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="section-spacing bg-slate-900">
-        <div className="container-custom">
+      <section className="py-16 md:py-20 relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
+        {/* Animated gradient orbs in background */}
+        <motion.div
+          className="absolute top-10 left-10 w-64 h-64 bg-gradient-to-br from-cyan-300/20 to-blue-400/20 rounded-full blur-3xl"
+          animate={{
+            x: [0, 100, 0],
+            y: [0, 50, 0],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+        <motion.div
+          className="absolute bottom-10 right-10 w-72 h-72 bg-gradient-to-tl from-blue-300/20 to-cyan-400/20 rounded-full blur-3xl"
+          animate={{
+            x: [0, -80, 0],
+            y: [0, -60, 0],
+            scale: [1.1, 1, 1.1],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+        
+        {/* Animated network mesh background */}
+        <svg className="absolute inset-0 w-full h-full opacity-50" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.4" />
+              <stop offset="50%" stopColor="#3b82f6" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0.4" />
+            </linearGradient>
+            <radialGradient id="nodeGlow">
+              <stop offset="0%" stopColor="rgba(59, 130, 246, 0.3)" />
+              <stop offset="100%" stopColor="rgba(59, 130, 246, 0)" />
+            </radialGradient>
+          </defs>
+          
+          {/* Network connections - more lines for richer look */}
+          <motion.line x1="10%" y1="20%" x2="30%" y2="40%" stroke="url(#lineGradient)" strokeWidth="1.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 0 }} />
+          <motion.line x1="30%" y1="40%" x2="50%" y2="30%" stroke="url(#lineGradient)" strokeWidth="1.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 0.1 }} />
+          <motion.line x1="50%" y1="30%" x2="70%" y2="50%" stroke="url(#lineGradient)" strokeWidth="1.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 0.2 }} />
+          <motion.line x1="70%" y1="50%" x2="90%" y2="35%" stroke="url(#lineGradient)" strokeWidth="1.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 0.3 }} />
+          
+          <motion.line x1="15%" y1="60%" x2="35%" y2="70%" stroke="url(#lineGradient)" strokeWidth="1.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 0.15 }} />
+          <motion.line x1="35%" y1="70%" x2="60%" y2="65%" stroke="url(#lineGradient)" strokeWidth="1.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 0.25 }} />
+          <motion.line x1="60%" y1="65%" x2="85%" y2="75%" stroke="url(#lineGradient)" strokeWidth="1.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 0.35 }} />
+          
+          <motion.line x1="30%" y1="40%" x2="35%" y2="70%" stroke="url(#lineGradient)" strokeWidth="1.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 0.4 }} />
+          <motion.line x1="50%" y1="30%" x2="60%" y2="65%" stroke="url(#lineGradient)" strokeWidth="1.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 0.5 }} />
+          <motion.line x1="70%" y1="50%" x2="85%" y2="75%" stroke="url(#lineGradient)" strokeWidth="1.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 0.45 }} />
+          
+          {/* Additional connecting lines for density */}
+          <motion.line x1="10%" y1="20%" x2="15%" y2="60%" stroke="url(#lineGradient)" strokeWidth="1" opacity="0.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 0.6 }} />
+          <motion.line x1="50%" y1="30%" x2="85%" y2="75%" stroke="url(#lineGradient)" strokeWidth="1" opacity="0.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 0.7 }} />
+          
+          {/* Animated nodes with glow effect and pulse */}
+          <motion.circle cx="10%" cy="20%" r="8" fill="url(#nodeGlow)" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.4, delay: 0 }} />
+          <motion.circle 
+            cx="10%" 
+            cy="20%" 
+            r="4" 
+            fill="#06b6d4" 
+            initial={{ scale: 0 }} 
+            animate={{ 
+              scale: [1, 1.3, 1],
+            }} 
+            transition={{ 
+              duration: 2, 
+              delay: 0,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }} 
+          />
+          
+          <motion.circle cx="30%" cy="40%" r="10" fill="url(#nodeGlow)" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.4, delay: 0.1 }} />
+          <motion.circle 
+            cx="30%" 
+            cy="40%" 
+            r="5" 
+            fill="#3b82f6" 
+            initial={{ scale: 0 }} 
+            animate={{ 
+              scale: [1, 1.3, 1],
+            }} 
+            transition={{ 
+              duration: 2, 
+              delay: 0.3,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }} 
+          />
+          
+          <motion.circle cx="50%" cy="30%" r="12" fill="url(#nodeGlow)" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.4, delay: 0.2 }} />
+          <motion.circle 
+            cx="50%" 
+            cy="30%" 
+            r="6" 
+            fill="#3b82f6" 
+            initial={{ scale: 0 }} 
+            animate={{ 
+              scale: [1, 1.3, 1],
+            }} 
+            transition={{ 
+              duration: 2, 
+              delay: 0.6,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }} 
+          />
+          
+          <motion.circle cx="70%" cy="50%" r="10" fill="url(#nodeGlow)" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.4, delay: 0.3 }} />
+          <motion.circle 
+            cx="70%" 
+            cy="50%" 
+            r="5" 
+            fill="#0ea5e9" 
+            initial={{ scale: 0 }} 
+            animate={{ 
+              scale: [1, 1.3, 1],
+            }} 
+            transition={{ 
+              duration: 2, 
+              delay: 0.9,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }} 
+          />
+          
+          <motion.circle cx="90%" cy="35%" r="8" fill="url(#nodeGlow)" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.4, delay: 0.4 }} />
+          <motion.circle 
+            cx="90%" 
+            cy="35%" 
+            r="4" 
+            fill="#0ea5e9" 
+            initial={{ scale: 0 }} 
+            animate={{ 
+              scale: [1, 1.3, 1],
+            }} 
+            transition={{ 
+              duration: 2, 
+              delay: 1.2,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }} 
+          />
+          
+          <motion.circle cx="15%" cy="60%" r="8" fill="url(#nodeGlow)" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.4, delay: 0.15 }} />
+          <motion.circle 
+            cx="15%" 
+            cy="60%" 
+            r="4" 
+            fill="#06b6d4" 
+            initial={{ scale: 0 }} 
+            animate={{ 
+              scale: [1, 1.3, 1],
+            }} 
+            transition={{ 
+              duration: 2, 
+              delay: 0.2,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }} 
+          />
+          
+          <motion.circle cx="35%" cy="70%" r="10" fill="url(#nodeGlow)" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.4, delay: 0.25 }} />
+          <motion.circle 
+            cx="35%" 
+            cy="70%" 
+            r="5" 
+            fill="#3b82f6" 
+            initial={{ scale: 0 }} 
+            animate={{ 
+              scale: [1, 1.3, 1],
+            }} 
+            transition={{ 
+              duration: 2, 
+              delay: 0.5,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }} 
+          />
+          
+          <motion.circle cx="60%" cy="65%" r="10" fill="url(#nodeGlow)" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.4, delay: 0.35 }} />
+          <motion.circle 
+            cx="60%" 
+            cy="65%" 
+            r="5" 
+            fill="#3b82f6" 
+            initial={{ scale: 0 }} 
+            animate={{ 
+              scale: [1, 1.3, 1],
+            }} 
+            transition={{ 
+              duration: 2, 
+              delay: 0.8,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }} 
+          />
+          
+          <motion.circle cx="85%" cy="75%" r="8" fill="url(#nodeGlow)" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.4, delay: 0.45 }} />
+          <motion.circle 
+            cx="85%" 
+            cy="75%" 
+            r="4" 
+            fill="#0ea5e9" 
+            initial={{ scale: 0 }} 
+            animate={{ 
+              scale: [1, 1.3, 1],
+            }} 
+            transition={{ 
+              duration: 2, 
+              delay: 1.1,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }} 
+          />
+        </svg>
+        <div className="container-custom relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="max-w-3xl mx-auto text-center"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
+            <motion.h2 
+              className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
               Have a Project in Mind? Let's Build It Together
-            </h2>
-            <p className="text-slate-400 mb-8 text-lg">
+            </motion.h2>
+            <motion.p 
+              className="text-slate-700 mb-8 text-lg"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
               Ready to transform your ideas into reality? Our team is here to help you 
               build innovative solutions that drive business growth.
-            </p>
-            <Link
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <Link
               to="/contact"
-              className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/50 hover:scale-105"
+              className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-lg transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/50 hover:scale-105"
             >
               <span>Get In Touch</span>
               <ArrowRight className="w-5 h-5" />
             </Link>
+            </motion.div>
           </motion.div>
         </div>
       </section>
