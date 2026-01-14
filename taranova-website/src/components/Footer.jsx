@@ -34,8 +34,6 @@ const Footer = () => {
     address: 'No. 199, 6th Cross, Duo, Marvel Layout, Ananthpura, Yelahanka, Bangalore North, Karnataka, India, 560064',
     phone: '+91 8123439031',
     email: 'mail-cr@taranova.solutions',
-    cin: 'U63999KA2025PTC201943',
-    gstin: '29AALCT8364Q1Z4',
   };
 
   return (
@@ -138,18 +136,6 @@ const Footer = () => {
 
         {/* Divider */}
         <div className="border-t border-slate-800 mb-8" />
-
-        {/* Legal Info */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 p-4 bg-slate-800/50 rounded-xl">
-          <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-6">
-            <span className="text-slate-500 text-sm">CIN:</span>
-            <span className="text-slate-300 text-sm font-mono">{contactDetails.cin}</span>
-          </div>
-          <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-6">
-            <span className="text-slate-500 text-sm">GSTIN:</span>
-            <span className="text-slate-300 text-sm font-mono">{contactDetails.gstin}</span>
-          </div>
-        </div>
 
         {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
