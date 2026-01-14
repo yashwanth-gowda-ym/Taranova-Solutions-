@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowRight } from 'lucide-react';
+import ShinyText from './ShinyText';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -40,12 +41,32 @@ const Navbar = () => {
     >
       <div className="container-custom h-20 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center group">
+        <Link to="/" className="flex items-center gap-3 group">
           <img
             src="/taranova-logo.png"
             alt="Taranova Solutions Logo"
             className="h-20 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
           />
+          <div className="flex flex-col">
+            <ShinyText 
+              text="Taranova"
+              className="text-2xl font-bold tracking-tight"
+              color="#0f172a"
+              shineColor="#06b6d4"
+              speed={3}
+              spread={100}
+              delay={0.5}
+            />
+            <ShinyText 
+              text="SOLUTIONS PVT. LTD."
+              className="text-sm font-medium tracking-wide"
+              color="#475569"
+              shineColor="#3b82f6"
+              speed={3}
+              spread={100}
+              delay={1}
+            />
+          </div>
         </Link>
 
         {/* Desktop Navigation */}
