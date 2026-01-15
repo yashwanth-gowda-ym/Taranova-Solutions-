@@ -168,14 +168,27 @@ const ProjectsPage = () => {
         </div>
       </section>
 
-      {/* CTA Section - Elegant Professional Design */}
+{/* CTA Section - Animated Hexagonal Design */}
       <section className="py-24 md:py-32 relative overflow-hidden bg-gradient-to-br from-slate-100 via-slate-50 to-blue-100">
-        {/* Elegant geometric background pattern */}
+        {/* Animated hexagonal pattern */}
         <div className="absolute inset-0 opacity-40">
           <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <pattern id="hexGrid" x="0" y="0" width="80" height="92" patternUnits="userSpaceOnUse">
-                <polygon points="40,0 80,23 80,69 40,92 0,69 0,23" fill="none" stroke="#0ea5e9" strokeWidth="0.8" opacity="0.4" />
+                <motion.polygon 
+                  points="40,0 80,23 80,69 40,92 0,69 0,23" 
+                  fill="none" 
+                  stroke="#0ea5e9" 
+                  strokeWidth="0.8" 
+                  animate={{
+                    opacity: [0.2, 0.6, 0.2]
+                  }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                />
               </pattern>
               <linearGradient id="elegantGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.8" />
@@ -185,54 +198,100 @@ const ProjectsPage = () => {
             </defs>
             <rect width="100%" height="100%" fill="url(#hexGrid)" />
             
-            {/* Elegant floating shapes */}
+            {/* Animated flowing shapes */}
             <motion.circle
               cx="15%"
               cy="20%"
               r="40"
               fill="url(#elegantGradient)"
-              opacity="0.15"
-              initial={{ scale: 0, rotate: 0 }}
-              whileInView={{ scale: 1, rotate: 180 }}
+              initial={{ scale: 0, rotate: 0, opacity: 0.15 }}
+              whileInView={{ scale: 1, rotate: 180, opacity: 0.15 }}
               viewport={{ once: true }}
               transition={{ duration: 2, ease: 'easeOut' }}
+              animate={{
+                scale: [1, 1.1, 1],
+                opacity: [0.15, 0.25, 0.15]
+              }}
+              style={{
+                transition: {
+                  duration: 5,
+                  repeat: Infinity
+                }
+              }}
             />
             <motion.circle
               cx="85%"
               cy="80%"
               r="60"
               fill="url(#elegantGradient)"
-              opacity="0.15"
-              initial={{ scale: 0, rotate: 0 }}
-              whileInView={{ scale: 1, rotate: -180 }}
+              initial={{ scale: 0, rotate: 0, opacity: 0.15 }}
+              whileInView={{ scale: 1, rotate: -180, opacity: 0.15 }}
               viewport={{ once: true }}
               transition={{ duration: 2, delay: 0.3, ease: 'easeOut' }}
+              animate={{
+                scale: [1, 1.15, 1],
+                opacity: [0.15, 0.25, 0.15]
+              }}
+              style={{
+                transition: {
+                  duration: 6,
+                  repeat: Infinity,
+                  delay: 1
+                }
+              }}
             />
             
-            {/* Subtle connection lines */}
+            {/* Animated connection lines with flow effect */}
             {[
               { x1: '20%', y1: '15%', x2: '35%', y2: '30%', delay: 0 },
               { x1: '65%', y1: '25%', x2: '80%', y2: '40%', delay: 0.2 },
               { x1: '10%', y1: '70%', x2: '25%', y2: '85%', delay: 0.4 },
               { x1: '75%', y1: '60%', x2: '90%', y2: '75%', delay: 0.6 },
             ].map((line, i) => (
-              <motion.line
-                key={i}
-                x1={line.x1}
-                y1={line.y1}
-                x2={line.x2}
-                y2={line.y2}
-                stroke="url(#elegantGradient)"
-                strokeWidth="2"
-                opacity="0.6"
-                initial={{ pathLength: 0 }}
-                whileInView={{ pathLength: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.5, delay: line.delay, ease: 'easeInOut' }}
-              />
+              <g key={i}>
+                <motion.line
+                  x1={line.x1}
+                  y1={line.y1}
+                  x2={line.x2}
+                  y2={line.y2}
+                  stroke="url(#elegantGradient)"
+                  strokeWidth="2"
+                  initial={{ pathLength: 0, opacity: 0.6 }}
+                  whileInView={{ pathLength: 1, opacity: 0.6 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.5, delay: line.delay, ease: 'easeInOut' }}
+                  animate={{
+                    opacity: [0.4, 0.8, 0.4]
+                  }}
+                  style={{
+                    transition: {
+                      duration: 4,
+                      repeat: Infinity,
+                      delay: line.delay * 2
+                    }
+                  }}
+                />
+                {/* Flowing particle on line */}
+                <motion.circle
+                  r="2"
+                  fill="#06b6d4"
+                  initial={{ opacity: 0 }}
+                  animate={{
+                    cx: [line.x1, line.x2, line.x1],
+                    cy: [line.y1, line.y2, line.y1],
+                    opacity: [0, 1, 1, 0]
+                  }}
+                  transition={{
+                    duration: 5,
+                    repeat: Infinity,
+                    delay: line.delay * 3,
+                    ease: "linear"
+                  }}
+                />
+              </g>
             ))}
             
-            {/* Gentle floating elements */}
+            {/* Floating animated elements with ripple effect */}
             {[
               { cx: '25%', cy: '45%', r: '3', delay: 0 },
               { cx: '55%', cy: '35%', r: '4', delay: 0.1 },
@@ -246,11 +305,20 @@ const ProjectsPage = () => {
                   cy={element.cy}
                   r={element.r}
                   fill="#06b6d4"
-                  opacity="0.8"
                   initial={{ scale: 0, opacity: 0 }}
                   whileInView={{ scale: 1, opacity: 0.8 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: element.delay }}
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.6, 0.9, 0.6]
+                  }}
+                  style={{
+                    transition: {
+                      duration: 3 + i * 0.5,
+                      repeat: Infinity
+                    }
+                  }}
                 />
                 <motion.circle
                   cx={element.cx}
@@ -259,17 +327,16 @@ const ProjectsPage = () => {
                   fill="none"
                   stroke="#3b82f6"
                   strokeWidth="0.8"
-                  opacity="0.5"
                   initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: [1, 1.3, 1], opacity: [0.5, 0, 0.5] }}
-                  transition={{ duration: 4, repeat: Infinity, delay: element.delay }}
+                  animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
+                  transition={{ duration: 5, repeat: Infinity, delay: element.delay }}
                 />
               </g>
             ))}
           </svg>
         </div>
 
-        {/* Bottom accent bar only */}
+        {/* Bottom accent bar */}
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-400/60 to-transparent" />
 
         <div className="container-custom relative z-10">

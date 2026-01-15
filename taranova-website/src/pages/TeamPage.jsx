@@ -195,9 +195,145 @@ const TeamPage = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="section-spacing bg-slate-900">
-        <div className="container-custom">
+{/* CTA Section */}
+      <section className="section-spacing relative bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 overflow-hidden">
+        {/* Particle network on left */}
+        <div className="absolute left-0 top-0 w-1/4 h-full opacity-70">
+          <svg className="w-full h-full" viewBox="0 0 300 400">
+            <defs>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+            {/* Network lines */}
+            {[...Array(20)].map((_, i) => (
+              <motion.line
+                key={`line-${i}`}
+                x1={Math.random() * 150}
+                y1={Math.random() * 400}
+                x2={Math.random() * 150 + 100}
+                y2={Math.random() * 400}
+                stroke="rgba(59, 130, 246, 0.6)"
+                strokeWidth="1.5"
+                filter="url(#glow)"
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: [0.3, 0.8, 0.3] }}
+                transition={{
+                  pathLength: { duration: 2, repeat: Infinity, delay: i * 0.15 },
+                  opacity: { duration: 2, repeat: Infinity, delay: i * 0.15 }
+                }}
+              />
+            ))}
+            {/* Particles */}
+            {[...Array(40)].map((_, i) => (
+              <motion.circle
+                key={`particle-${i}`}
+                cx={Math.random() * 200}
+                cy={Math.random() * 400}
+                r="2.5"
+                fill="#3b82f6"
+                filter="url(#glow)"
+                animate={{
+                  opacity: [0.4, 1, 0.4],
+                  scale: [1, 1.8, 1]
+                }}
+                transition={{
+                  duration: 1.5 + Math.random(),
+                  repeat: Infinity,
+                  delay: Math.random() * 2
+                }}
+              />
+            ))}
+          </svg>
+        </div>
+
+        {/* Wide flowing data stream with animated particles */}
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-48">
+          {/* Glowing base */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-blue-200/30 via-cyan-200/40 to-blue-300/30 blur-2xl"
+            animate={{
+              opacity: [0.4, 0.7, 0.4]
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          
+          {/* Flowing light particles across the beam */}
+          {[...Array(25)].map((_, i) => (
+            <motion.div
+              key={`flow-${i}`}
+              className="absolute w-3 h-3 bg-blue-400 rounded-full"
+              style={{
+                top: `${20 + Math.random() * 60}%`,
+                left: '-5%',
+                boxShadow: '0 0 10px 2px rgba(59, 130, 246, 0.8)'
+              }}
+              animate={{
+                left: ['0%', '105%'],
+                opacity: [0, 1, 1, 0],
+                scale: [0.5, 1.2, 1.2, 0.5]
+              }}
+              transition={{
+                duration: 8 + Math.random() * 4,
+                repeat: Infinity,
+                delay: i * 0.4,
+                ease: "linear"
+              }}
+            />
+          ))}
+
+          {/* Faster streaking particles */}
+          {[...Array(15)].map((_, i) => (
+            <motion.div
+              key={`streak-${i}`}
+              className="absolute h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent rounded-full"
+              style={{
+                top: `${25 + Math.random() * 50}%`,
+                left: '-10%',
+                width: '40px',
+                boxShadow: '0 0 8px 2px rgba(34, 211, 238, 0.6)'
+              }}
+              animate={{
+                left: ['0%', '110%'],
+                opacity: [0, 1, 0]
+              }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+                delay: i * 0.8,
+                ease: "easeIn"
+              }}
+            />
+          ))}
+
+          {/* Pulsing wave effect */}
+          {[0, 1, 2].map((idx) => (
+            <motion.div
+              key={`wave-${idx}`}
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-300/20 to-transparent"
+              animate={{
+                x: ['-100%', '200%'],
+                opacity: [0, 0.6, 0]
+              }}
+              transition={{
+                duration: 7,
+                repeat: Infinity,
+                delay: idx * 2.3,
+                ease: "easeInOut"
+              }}
+            />
+          ))}
+        </div>
+
+        <div className="container-custom relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -205,15 +341,15 @@ const TeamPage = () => {
             transition={{ duration: 0.6 }}
             className="max-w-3xl mx-auto text-center"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
               Want to Join Our Team?
             </h2>
-            <p className="text-slate-400 mb-8 text-lg">
+            <p className="text-slate-700 mb-8 text-lg">
               We're always looking for talented individuals who share our passion for innovation.
             </p>
             <Link
               to="/contact"
-              className="inline-flex items-center space-x-2 px-8 py-4 bg-white text-slate-900 font-medium rounded-lg transition-all duration-300 hover:bg-slate-100 hover:shadow-lg"
+              className="inline-flex items-center space-x-2 px-8 py-4 bg-slate-900 text-white font-medium rounded-lg transition-all duration-300 hover:bg-slate-800 hover:shadow-xl hover:shadow-blue-200"
             >
               <span>View Open Positions</span>
               <ArrowRight className="w-5 h-5" />
