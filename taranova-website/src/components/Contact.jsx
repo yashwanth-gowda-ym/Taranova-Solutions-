@@ -1,15 +1,23 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { FaMapMarkerAlt, FaEnvelope, FaPhone, FaPaperPlane } from 'react-icons/fa';
+import emailjs from '@emailjs/browser';
+import { emailjsConfig } from '../config/emailjs';
+
+// Initialize EmailJS
+emailjs.init(emailjsConfig.publicKey);
 
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,21 +25,128 @@ const Contact = () => {
       ...prev,
       [name]: value,
     }));
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: null,
+      }));
+    }
+  };
+
+  const validateForm = async () => {
+    const newErrors = {};
+    
+    // Basic validation - STRICT
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    }
+    // Phone is now REQUIRED
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Phone number is required';
+    } else if (!/^\+?[\d\s\-\(\)]{10,}$/.test(formData.phone)) {
+      newErrors.phone = 'Please enter a valid phone number (at least 10 digits)';
+    }
+    if (!formData.message.trim()) {
+      newErrors.message = 'Message is required';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return false;
+    }
+
+    // Validate email and phone via backend APIs - THIS MUST PASS BEFORE EMAILJS
+    setIsValidating(true);
+    try {
+      // VALIDATE EMAIL FIRST
+      if (formData.email.trim()) {
+        const emailResponse = await fetch('/api/validate-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: formData.email }),
+        });
+
+        if (!emailResponse.ok) {
+          const errorData = await emailResponse.json();
+          newErrors.email = errorData.message || 'Invalid email address. Please try again.';
+          setErrors(newErrors);
+          setIsValidating(false);
+          return false; // BLOCK submission immediately
+        }
+      }
+
+      // VALIDATE PHONE
+      if (formData.phone.trim()) {
+        const phoneResponse = await fetch('/api/validate-phone', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: formData.phone }),
+        });
+
+        if (!phoneResponse.ok) {
+          const errorData = await phoneResponse.json();
+          newErrors.phone = errorData.message || 'Invalid phone number. Please try again.';
+          setErrors(newErrors);
+          setIsValidating(false);
+          return false; // BLOCK submission immediately
+        }
+      }
+    } catch (error) {
+      console.error('Validation error:', error);
+      setErrors({ general: 'Validation service error. Please try again.' });
+      setIsValidating(false);
+      return false;
+    }
+
+    setIsValidating(false);
+
+    // If we reach here, both email and phone are validated
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate form data
+    const isValid = await validateForm();
+    if (!isValid) {
+      return;
+    }
+
     setIsSubmitting(true);
-    
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setSubmitStatus('success');
-    setFormData({ name: '', email: '', message: '' });
-    setIsSubmitting(false);
-    
-    // Reset status after 3 seconds
-    setTimeout(() => setSubmitStatus(null), 3000);
+
+    try {
+      // Send email via EmailJS
+      await emailjs.send(
+        emailjsConfig.serviceId,
+        emailjsConfig.templateId,
+        {
+          user_name: formData.name,
+          user_email: formData.email,
+          user_phone: formData.phone,
+          message: formData.message,
+          reply_to: formData.email,
+        }
+      );
+
+      setSubmitStatus('success');
+      setFormData({ name: '', email: '', phone: '', message: '' });
+      
+      // Reset status after 3 seconds
+      setTimeout(() => setSubmitStatus(null), 3000);
+    } catch (error) {
+      console.error('Email submission error:', error);
+      setSubmitStatus('error');
+      
+      // Reset status after 4 seconds
+      setTimeout(() => setSubmitStatus(null), 4000);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -141,8 +256,36 @@ const Contact = () => {
                   onChange={handleChange}
                   required
                   placeholder="john@company.com"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-all duration-200 outline-none"
+                  className={`w-full px-4 py-3 rounded-xl border ${
+                    errors.email ? 'border-red-500 focus:ring-red-200' : 'border-gray-200 focus:ring-primary-200'
+                  } focus:border-primary-500 focus:ring-2 transition-all duration-200 outline-none`}
                 />
+                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+              </motion.div>
+
+              {/* Phone Field */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.25 }}
+              >
+                <label htmlFor="phone" className="block text-sm font-medium text-dark-700 mb-2">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  required
+                  placeholder="+1 (555) 123-4567"
+                  className={`w-full px-4 py-3 rounded-xl border ${
+                    errors.phone ? 'border-red-500 focus:ring-red-200' : 'border-gray-200 focus:ring-primary-200'
+                  } focus:border-primary-500 focus:ring-2 transition-all duration-200 outline-none`}
+                />
+                {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
               </motion.div>
 
               {/* Message Field */}
@@ -163,19 +306,26 @@ const Contact = () => {
                   required
                   rows="4"
                   placeholder="Tell us about your project..."
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-all duration-200 outline-none resize-none"
+                  className={`w-full px-4 py-3 rounded-xl border ${
+                    errors.message ? 'border-red-500 focus:ring-red-200' : 'border-gray-200 focus:ring-primary-200'
+                  } focus:border-primary-500 focus:ring-2 transition-all duration-200 outline-none resize-none`}
                 />
+                {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
               </motion.div>
 
               {/* Submit Button */}
               <motion.button
                 type="submit"
-                disabled={isSubmitting}
-                whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
-                whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
+                disabled={isSubmitting || isValidating}
+                whileHover={{ scale: (isSubmitting || isValidating) ? 1 : 1.02 }}
+                whileTap={{ scale: (isSubmitting || isValidating) ? 1 : 0.98 }}
                 className={`w-full py-4 rounded-xl font-semibold text-lg flex items-center justify-center space-x-2 transition-all duration-200 ${
                   submitStatus === 'success'
                     ? 'bg-green-500 text-white'
+                    : submitStatus === 'error'
+                    ? 'bg-red-500 text-white'
+                    : submitStatus === 'validation-warning'
+                    ? 'bg-yellow-500 text-white'
                     : 'bg-primary-600 text-white hover:bg-primary-700 shadow-lg shadow-primary-600/30'
                 }`}
               >
@@ -187,12 +337,34 @@ const Contact = () => {
                     </svg>
                     <span>Sending...</span>
                   </>
+                ) : isValidating ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    <span>Validating...</span>
+                  </>
                 ) : submitStatus === 'success' ? (
                   <>
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     <span>Message Sent!</span>
+                  </>
+                ) : submitStatus === 'error' ? (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    <span>Failed to Send</span>
+                  </>
+                ) : submitStatus === 'validation-warning' ? (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Sent (Validation Skipped)</span>
                   </>
                 ) : (
                   <>

@@ -1,36 +1,164 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { MapPin, Mail, Phone, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
+import { MapPin, Mail, Phone, Clock, Send, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import emailjs from '@emailjs/browser';
+import ReCAPTCHA from "react-google-recaptcha";
 import { emailjsConfig } from '../config/emailjs';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    mobile: '', // ADDED: Mobile field state
+    countryCode: '+91', // Default to India
+    mobile: '',
     company: '',
     message: '',
   });
-  const [status, setStatus] = useState('idle'); // 'idle' | 'sending' | 'success' | 'error'
+  const [status, setStatus] = useState('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [validationStep, setValidationStep] = useState('');
+  const [captchaToken, setCaptchaToken] = useState(null);
+
+  const BACKEND_URL = 'http://localhost:5001';
+
+  // Popular country codes
+  const countryCodes = [
+    { code: '+1', country: 'US/CA', flag: '🇺🇸' },
+    { code: '+44', country: 'UK', flag: '🇬🇧' },
+    { code: '+91', country: 'India', flag: '🇮🇳' },
+    { code: '+86', country: 'China', flag: '🇨🇳' },
+    { code: '+81', country: 'Japan', flag: '🇯🇵' },
+    { code: '+49', country: 'Germany', flag: '🇩🇪' },
+    { code: '+33', country: 'France', flag: '🇫🇷' },
+    { code: '+61', country: 'Australia', flag: '🇦🇺' },
+    { code: '+971', country: 'UAE', flag: '🇦🇪' },
+    { code: '+65', country: 'Singapore', flag: '🇸🇬' },
+    { code: '+7', country: 'Russia', flag: '🇷🇺' },
+    { code: '+55', country: 'Brazil', flag: '🇧🇷' },
+    { code: '+27', country: 'S. Africa', flag: '🇿🇦' },
+    { code: '+82', country: 'S. Korea', flag: '🇰🇷' },
+    { code: '+34', country: 'Spain', flag: '🇪🇸' },
+    { code: '+39', country: 'Italy', flag: '🇮🇹' },
+    { code: '+52', country: 'Mexico', flag: '🇲🇽' },
+    { code: '+62', country: 'Indonesia', flag: '🇮🇩' },
+    { code: '+60', country: 'Malaysia', flag: '🇲🇾' },
+    { code: '+66', country: 'Thailand', flag: '🇹🇭' },
+  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleCaptchaChange = (value) => {
+    setCaptchaToken(value);
+  };
+
+  const validateEmail = async (email) => {
+    try {
+      console.log('Calling email validation API...');
+      const response = await fetch(`${BACKEND_URL}/api/validate-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      console.log('Email validation response status:', response.status);
+      const data = await response.json();
+      console.log('Email validation response:', data);
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Email validation failed');
+      }
+
+      return { valid: true, message: data.message };
+    } catch (error) {
+      console.error('Email validation error:', error);
+      throw new Error(error.message || 'Email validation failed. Please try again.');
+    }
+  };
+
+  const validatePhone = async (phone) => {
+    try {
+      console.log('Calling phone validation API with:', phone);
+      const response = await fetch(`${BACKEND_URL}/api/validate-phone`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone }),
+      });
+
+      console.log('Phone validation response status:', response.status);
+      const data = await response.json();
+      console.log('Phone validation response:', data);
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Phone validation failed');
+      }
+
+      return { valid: true, message: data.message };
+    } catch (error) {
+      console.error('Phone validation error:', error);
+      throw new Error(error.message || 'Phone validation failed. Please try again.');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setStatus('sending');
+    setStatus('validating');
     setErrorMessage('');
 
+    if (!captchaToken) {
+      setStatus('error');
+      setErrorMessage('Please verify CAPTCHA');
+      return;
+    }
+
     try {
+      // Combine country code and mobile number
+      const fullPhoneNumber = `${formData.countryCode}${formData.mobile}`;
+      
+      // Step 1: Verify CAPTCHA
+      setValidationStep('Verifying CAPTCHA...');
+      console.log('Step 1: Verifying CAPTCHA');
+      const captchaRes = await fetch(`${BACKEND_URL}/api/verify-captcha`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: captchaToken })
+      });
+      
+      const captchaData = await captchaRes.json();
+      
+      if (!captchaData.success) {
+        throw new Error('Captcha verification failed');
+      }
+      console.log('✅ CAPTCHA verified successfully');
+
+      // Step 2: Validate Email
+      setValidationStep('Verifying email address...');
+      console.log('Step 2: Validating email:', formData.email);
+      await validateEmail(formData.email);
+      console.log('✅ Email validated successfully');
+
+      // Step 3: Validate Phone
+      setValidationStep('Verifying phone number...');
+      console.log('Step 3: Validating phone:', fullPhoneNumber);
+      await validatePhone(fullPhoneNumber);
+      console.log('✅ Phone validated successfully');
+
+      // Step 4: If all validations pass, send email via EmailJS
+      setStatus('sending');
+      setValidationStep('Sending your message...');
+      console.log('Step 4: Sending email via EmailJS');
+
       const templateParams = {
         user_name: formData.name,
         user_email: formData.email,
-        user_mobile: formData.mobile || 'Not provided', // ADDED: Variable for EmailJS
+        user_mobile: fullPhoneNumber,
         company: formData.company || 'Not specified',
         message: formData.message,
         reply_to: formData.email,
@@ -43,19 +171,22 @@ const ContactPage = () => {
         emailjsConfig.publicKey
       );
 
+      console.log('✅ Email sent successfully');
       setStatus('success');
-      // Reset form including mobile
-      setFormData({ name: '', email: '', mobile: '', company: '', message: '' });
+      setValidationStep('');
+      // Reset form
+      setFormData({ name: '', email: '', countryCode: '+91', mobile: '', company: '', message: '' });
       
       // Reset success message after 5 seconds
       setTimeout(() => {
         setStatus('idle');
       }, 5000);
     } catch (error) {
-      console.error('EmailJS Error:', error);
+      console.error('❌ Form submission error:', error);
       setStatus('error');
+      setValidationStep('');
       setErrorMessage(
-        error.text || 'Failed to send message. Please try again later or email us directly.'
+        error.message || 'Failed to send message. Please check your information and try again.'
       );
     }
   };
@@ -182,6 +313,21 @@ const ContactPage = () => {
             >
               <h2 className="text-2xl font-bold text-slate-900 mb-6">Send Us a Message</h2>
 
+              {/* Validation Progress */}
+              {(status === 'validating' || status === 'sending') && validationStep && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl flex items-center space-x-3"
+                >
+                  <Loader2 className="w-5 h-5 text-blue-600 animate-spin flex-shrink-0" />
+                  <div>
+                    <p className="font-medium text-blue-800">{validationStep}</p>
+                    <p className="text-sm text-blue-600 mt-1">Please wait...</p>
+                  </div>
+                </motion.div>
+              )}
+
               {/* Success Message */}
               {status === 'success' && (
                 <motion.div
@@ -208,7 +354,7 @@ const ContactPage = () => {
                 >
                   <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-medium text-red-800">Failed to Send Message</p>
+                    <p className="font-medium text-red-800">Validation Failed</p>
                     <p className="text-sm text-red-600 mt-1">{errorMessage}</p>
                   </div>
                 </motion.div>
@@ -229,7 +375,7 @@ const ContactPage = () => {
                       onChange={handleChange}
                       required
                       placeholder="John Doe"
-                      disabled={status === 'sending'}
+                      disabled={status === 'validating' || status === 'sending'}
                       className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
@@ -245,31 +391,49 @@ const ContactPage = () => {
                       onChange={handleChange}
                       required
                       placeholder="john@company.com"
-                      disabled={status === 'sending'}
+                      disabled={status === 'validating' || status === 'sending'}
                       className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                 </div>
 
-                {/* Row 2: Mobile & Company */}
+                {/* Row 2: Mobile with Country Code & Company */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div>
+                  <div className="flex flex-col">
                     <label htmlFor="mobile" className="block text-sm font-medium text-slate-700 mb-2">
                       Mobile Number *
                     </label>
-                    <input
-                      type="tel"
-                      id="mobile"
-                      name="mobile"
-                      value={formData.mobile}
-                      onChange={handleChange}
-                      required
-                      placeholder="+91 98765 43210"
-                      disabled={status === 'sending'}
-                      className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                    />
+                    <div className="flex gap-2 flex-1">
+                      <select
+                        name="countryCode"
+                        value={formData.countryCode}
+                        onChange={handleChange}
+                        disabled={status === 'validating' || status === 'sending'}
+                        className="w-28 px-3 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {countryCodes.map((country) => (
+                          <option key={country.code} value={country.code}>
+                            {country.flag} {country.code}
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        type="tel"
+                        id="mobile"
+                        name="mobile"
+                        value={formData.mobile}
+                        onChange={handleChange}
+                        required
+                        placeholder="9876543210"
+                        disabled={status === 'validating' || status === 'sending'}
+                        className="flex-1 px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      />
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Enter number without country code
+                    </p>
                   </div>
-                  <div>
+                  <div className="flex flex-col">
                     <label htmlFor="company" className="block text-sm font-medium text-slate-700 mb-2">
                       Company (Optional)
                     </label>
@@ -280,9 +444,12 @@ const ContactPage = () => {
                       value={formData.company}
                       onChange={handleChange}
                       placeholder="Your Company"
-                      disabled={status === 'sending'}
-                      className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      disabled={status === 'validating' || status === 'sending'}
+                      className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex-1"
                     />
+                    <p className="text-xs text-slate-500 mt-1">
+                      &nbsp;
+                    </p>
                   </div>
                 </div>
 
@@ -298,29 +465,33 @@ const ContactPage = () => {
                     required
                     rows="4"
                     placeholder="Tell us about your project..."
-                    disabled={status === 'sending'}
+                    disabled={status === 'validating' || status === 'sending'}
                     className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
+                </div>
+
+                <div className="flex justify-center my-4">
+                  <ReCAPTCHA
+                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                    onChange={handleCaptchaChange}
                   />
                 </div>
 
                 <button
                   type="submit"
-                  disabled={status === 'sending'}
+                  disabled={status === 'validating' || status === 'sending'}
                   className={`w-full py-4 rounded-lg font-semibold text-lg flex items-center justify-center space-x-2 transition-all duration-300 ${
                     status === 'success'
                       ? 'bg-green-500 text-white'
                       : status === 'error'
                       ? 'bg-slate-900 text-white hover:bg-slate-800'
                       : 'bg-slate-900 text-white hover:bg-slate-800 hover:shadow-lg'
-                  } ${status === 'sending' ? 'cursor-not-allowed opacity-70' : ''}`}
+                  } ${(status === 'validating' || status === 'sending') ? 'cursor-not-allowed opacity-70' : ''}`}
                 >
-                  {status === 'sending' ? (
+                  {status === 'validating' || status === 'sending' ? (
                     <>
-                      <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                      </svg>
-                      <span>Sending...</span>
+                      <Loader2 className="animate-spin h-5 w-5 text-white" />
+                      <span>{status === 'validating' ? 'Validating...' : 'Sending...'}</span>
                     </>
                   ) : status === 'success' ? (
                     <>
